@@ -18,3 +18,5 @@
 .env
 .env.test
 /.idea
+src/Migrations/
+public/diagrams/*.dia~
