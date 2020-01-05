@@ -23,7 +23,7 @@ class Product
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255)
      */
     private $name;
 
@@ -38,7 +38,7 @@ class Product
     private $description;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     private $price;
 
@@ -68,7 +68,7 @@ class Product
         return $this->name;
     }
 
-    public function setName(int $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -99,12 +99,12 @@ class Product
         return $this;
     }
 
-    public function getPrice(): ?int
+    public function getPrice(): ?string
     {
         return $this->price;
     }
 
-    public function setPrice(int $price): self
+    public function setPrice(string $price): self
     {
         $this->price = $price;
 
