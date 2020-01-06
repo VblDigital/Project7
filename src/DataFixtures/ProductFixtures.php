@@ -26,7 +26,7 @@ class ProductFixtures extends Fixture
                 volée. Les performances n’ont pour autant pas été oubliées par le fabricant : une très bonne qualité de 
                 photo, une autonomie sans précédent et une étanchéité de l’appareil vous permettant de braver sans 
                 soucis les intempéries")
-            ->setPrice("699,90 EUR")
+            ->setPrice("69990")
             ->setStock("22");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
@@ -41,7 +41,7 @@ class ProductFixtures extends Fixture
                 volée. Les performances n’ont pour autant pas été oubliées par le fabricant : une très bonne qualité de 
                 photo, une autonomie sans précédent et une étanchéité de l’appareil vous permettant de braver sans 
                 soucis les intempéries")
-            ->setPrice("699,90 EUR")
+            ->setPrice("69990")
             ->setStock("12");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
@@ -56,7 +56,7 @@ class ProductFixtures extends Fixture
                 volée. Les performances n’ont pour autant pas été oubliées par le fabricant : une très bonne qualité de 
                 photo, une autonomie sans précédent et une étanchéité de l’appareil vous permettant de braver sans 
                 soucis les intempéries")
-            ->setPrice("699,90 EUR")
+            ->setPrice("69990")
             ->setStock("10");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
@@ -71,7 +71,7 @@ class ProductFixtures extends Fixture
                 volée. Les performances n’ont pour autant pas été oubliées par le fabricant : une très bonne qualité de 
                 photo, une autonomie sans précédent et une étanchéité de l’appareil vous permettant de braver sans 
                 soucis les intempéries")
-            ->setPrice("799,00 EUR")
+            ->setPrice("79900")
             ->setStock("15");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
@@ -86,7 +86,7 @@ class ProductFixtures extends Fixture
                 volée. Les performances n’ont pour autant pas été oubliées par le fabricant : une très bonne qualité de 
                 photo, une autonomie sans précédent et une étanchéité de l’appareil vous permettant de braver sans 
                 soucis les intempéries")
-            ->setPrice("799,00 EUR")
+            ->setPrice("79900")
             ->setStock("25");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
@@ -101,7 +101,7 @@ class ProductFixtures extends Fixture
                 volée. Les performances n’ont pour autant pas été oubliées par le fabricant : une très bonne qualité de 
                 photo, une autonomie sans précédent et une étanchéité de l’appareil vous permettant de braver sans 
                 soucis les intempéries")
-            ->setPrice("799,00 EUR")
+            ->setPrice("79900")
             ->setStock("16");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
@@ -119,7 +119,7 @@ class ProductFixtures extends Fixture
             à haute performance et deux cœurs à haute efficacité énergétique. La vitesse d’exécution de applications est 
             alors deux fois supérieure à celle de l’Apple A8 de l’iPhone 6 et le SoC consomme jusqu’à cinq fois moins 
             d’énergie.")
-            ->setPrice("499,90 EUR")
+            ->setPrice("49990")
             ->setStock("12");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
@@ -137,7 +137,7 @@ class ProductFixtures extends Fixture
             à haute performance et deux cœurs à haute efficacité énergétique. La vitesse d’exécution de applications est 
             alors deux fois supérieure à celle de l’Apple A8 de l’iPhone 6 et le SoC consomme jusqu’à cinq fois moins 
             d’énergie.")
-            ->setPrice("499,90 EUR")
+            ->setPrice("49990")
             ->setStock("5");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
@@ -155,7 +155,7 @@ class ProductFixtures extends Fixture
             à haute performance et deux cœurs à haute efficacité énergétique. La vitesse d’exécution de applications est 
             alors deux fois supérieure à celle de l’Apple A8 de l’iPhone 6 et le SoC consomme jusqu’à cinq fois moins 
             d’énergie.")
-            ->setPrice("499,90 EUR")
+            ->setPrice("49990")
             ->setStock("9");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
@@ -173,7 +173,7 @@ class ProductFixtures extends Fixture
             à haute performance et deux cœurs à haute efficacité énergétique. La vitesse d’exécution de applications est 
             alors deux fois supérieure à celle de l’Apple A8 de l’iPhone 6 et le SoC consomme jusqu’à cinq fois moins 
             d’énergie.")
-            ->setPrice("499,90 EUR")
+            ->setPrice("49990")
             ->setStock("11");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
@@ -191,7 +191,7 @@ class ProductFixtures extends Fixture
             à haute performance et deux cœurs à haute efficacité énergétique. La vitesse d’exécution de applications est 
             alors deux fois supérieure à celle de l’Apple A8 de l’iPhone 6 et le SoC consomme jusqu’à cinq fois moins 
             d’énergie.")
-            ->setPrice("499,90 EUR")
+            ->setPrice("49990")
             ->setStock("15");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
@@ -209,7 +209,7 @@ class ProductFixtures extends Fixture
             à haute performance et deux cœurs à haute efficacité énergétique. La vitesse d’exécution de applications est 
             alors deux fois supérieure à celle de l’Apple A8 de l’iPhone 6 et le SoC consomme jusqu’à cinq fois moins 
             d’énergie.")
-            ->setPrice("499,90 EUR")
+            ->setPrice("49990")
             ->setStock("10");
         $product->addClient($this->getReference('client1'));
         $manager->persist($product);
