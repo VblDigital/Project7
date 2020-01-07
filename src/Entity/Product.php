@@ -51,7 +51,7 @@ class Product
      * @ORM\ManyToMany(targetEntity="App\Entity\Client", inversedBy="products")
      * @ORM\JoinTable(name="products_clients")
      */
-    private $client;
+    private $clients;
 
     public function __construct()
     {
@@ -63,7 +63,7 @@ class Product
         return $this->id;
     }
 
-    public function getName(): ?int
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -128,7 +128,7 @@ class Product
      */
     public function getClient()
     {
-        return $this->client;
+        return $this->clients;
     }
 
     /**
@@ -137,13 +137,13 @@ class Product
      */
     public function setClient ( $client )
     {
-        $this->client = $client;
+        $this->clients = $client;
         return $client;
     }
 
     public function addClient(Client $client)
     {
         $client->addProduct($this);
-        $this->client[] = $client;
+        $this->clients[] = $client;
     }
 }

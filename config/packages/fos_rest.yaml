@@ -2,6 +2,7 @@
 fos_rest:
   view:
     formats: {json: true, xml: false, rss: false}
+    view_response_listener: force
   serializer:
     serialize_null: true
   body_converter:
