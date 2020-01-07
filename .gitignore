@@ -19,4 +19,5 @@
 .env.test
 /.idea
 src/Migrations/
-public/diagrams/fichiers_dia/
+/public/diagrams/fichiers_dia/
+>>>>>>> configuration
