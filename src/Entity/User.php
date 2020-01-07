@@ -44,12 +44,12 @@ class User
 
     public function getUsername(): ?string
     {
-        return $this->name;
+        return $this->username;
     }
 
-    public function setUsername(string $name): self
+    public function setUsername(string $username): self
     {
-        $this->name = $name;
+        $this->username = $username;
 
         return $this;
     }
