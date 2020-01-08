@@ -95,12 +95,12 @@ class Client implements UserInterface
         return $this;
     }
 
-    public function getRoles(): ?string
+    public function getRole(): ?string
     {
         return $this->role;
     }
 
-    public function setRoles(string $role): self
+    public function setRole(string $role): self
     {
         $this->role = $role;
 
@@ -157,6 +157,11 @@ class Client implements UserInterface
             }
         }
         return $this;
+    }
+
+    public function getRoles()
+    {
+        return ['ROLE_CLIENT'];
     }
 
     /**
