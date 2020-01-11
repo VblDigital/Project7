@@ -38,7 +38,7 @@ class Client
     private $role;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Product", mappedBy="products")
+     * @ORM\ManyToMany(targetEntity="Product", mappedBy="products", cascade={"persist"})
      */
     private $products;
 
@@ -56,6 +56,14 @@ class Client
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
+    {
+        $this->id = $id;
     }
 
     public function getName(): ?string
@@ -106,25 +114,9 @@ class Client
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getProducts()
+    public function addProduct(Product $products)
     {
-        return $this->products;
-    }
-
-    /**
-     * @param mixed $products
-     */
-    public function setProducts($products): void
-    {
-        $this->products = $products;
-    }
-
-    public function addProduct(Product $product)
-    {
-        $this->products[] = $product;
+        $this->products[] = $products;
     }
 
     /**

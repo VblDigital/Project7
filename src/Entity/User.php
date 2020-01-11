@@ -32,7 +32,7 @@ class User
     private $email;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Client", inversedBy="users")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Client", inversedBy="users", cascade={"persist"})
      * @ORM\JoinColumn(name="client_ìd", referencedColumnName="id", nullable=false)
      */
     private $client;
@@ -93,5 +93,17 @@ class User
     {
         $this->client = $client;
         return $this;
+    }
+
+    /**
+     * @param array $data
+     * @param $client
+     * @return void
+     */
+    function createUserObject(array $data)
+    {
+        $this->setUsername($data['username']);
+        $this->setPassword($data['password']);
+        $this->setEmail($data['email']);
     }
 }

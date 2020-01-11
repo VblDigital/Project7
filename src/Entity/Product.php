@@ -123,27 +123,9 @@ class Product
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getClient()
+    public function addClient(Client $clients)
     {
-        return $this->clients;
-    }
-
-    /**
-     * @param $client
-     * @return mixed
-     */
-    public function setClient ( $client )
-    {
-        $this->clients = $client;
-        return $client;
-    }
-
-    public function addClient(Client $client)
-    {
-        $client->addProduct($this);
-        $this->clients[] = $client;
+        $clients->addProduct($this);
+        $this->clients[] = $clients;
     }
 }

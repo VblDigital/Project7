@@ -4,7 +4,10 @@ namespace App\Repository;
 
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query\Parameter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * @method Product|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,12 +22,32 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function findAllProducts($id)
+    /**
+     * @param $clientId
+     * @return mixed
+     */
+    public function findAllProducts($clientId)
     {
         $query = $this->createQueryBuilder('product')
             ->leftJoin('product.clients', 'c')
-            ->where('c.id = :id')
-            ->setParameter('id', $id);
+            ->where('c.id = :clientId')
+            ->setParameter('clientId', $clientId);
+
+        return $results = $query->getQuery()->getResult();
+    }
+
+    /**
+     * @param $clientId
+     * @param $productId
+     * @return mixed
+     */
+    public function findOneProduct($clientId, $productId)
+    {
+        $query = $this->createQueryBuilder('product')
+            ->leftJoin('product.clients', 'c')
+            ->where('c.id = :clientId')
+            ->andWhere('product.id = :productId')
+            ->setParameters(array('clientId' => $clientId, 'productId' => $productId));
 
         return $results = $query->getQuery()->getResult();
     }
