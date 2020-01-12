@@ -24,3 +24,4 @@ public/diagrams/fichiers_dia/
 /.web-server-pid
 ###< symfony/web-server-bundle ###
 public/temp
+

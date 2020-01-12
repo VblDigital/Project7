@@ -38,7 +38,7 @@ class Product
     private $description;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     private $price;
 
