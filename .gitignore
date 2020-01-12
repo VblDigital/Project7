@@ -19,5 +19,9 @@
 .env.test
 /.idea
 src/Migrations/
-/public/diagrams/fichiers_dia/
->>>>>>> configuration
+public/diagrams/fichiers_dia/
+###> symfony/web-server-bundle ###
+/.web-server-pid
+###< symfony/web-server-bundle ###
+public/temp
+

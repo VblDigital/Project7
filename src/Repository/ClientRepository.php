@@ -18,4 +18,18 @@ class ClientRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Client::class);
     }
+
+    /**
+     * @param $clientId
+     * @param $userId
+     * @return mixed
+     */
+    public function findClient($clientId)
+    {
+        $query = $this->createQueryBuilder('client')
+            ->where('client.id = :clientId')
+            ->setParameters(array('clientId' => $clientId));
+
+        return $results = $query->getQuery()->getResult();
+    }
 }
