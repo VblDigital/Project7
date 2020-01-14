@@ -86,7 +86,7 @@ class User
         return $this->client;
     }
     /**
-     * @param $trick
+     * @param $client
      * @return $this
      */
     public function setClient ( $client)
@@ -97,7 +97,6 @@ class User
 
     /**
      * @param array $data
-     * @param $client
      * @return void
      */
     function createUserObject(array $data)

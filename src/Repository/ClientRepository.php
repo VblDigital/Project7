@@ -21,7 +21,6 @@ class ClientRepository extends ServiceEntityRepository
 
     /**
      * @param $clientId
-     * @param $userId
      * @return mixed
      */
     public function findClient($clientId)
