@@ -91,7 +91,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Put(
-     *     path = "/modifyuser/{userId}",
+     *     path = "/users/{userId}",
      *     name = "modify_user")
      * @ParamConverter("user", converter="fos_rest.request_body")
      * @param $userId
