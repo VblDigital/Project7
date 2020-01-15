@@ -40,7 +40,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Get(
-     *     path = "/user/{clientId}/{userId}",
+     *     path = "/users/{clientId}/{userId}",
      *     name = "view_user")
      * @param User|null $user
      * @param UserRepository $userRepository
@@ -62,7 +62,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Post(
-     *     path = "/newuser/{clientId}",
+     *     path = "/users/{clientId}",
      *     name = "new_user")
      * @ParamConverter("user", converter="fos_rest.request_body")
      * @param User $user
@@ -100,28 +100,28 @@ class UserController extends AbstractFOSRestController
      */
     public function modifyUser(User $user, $userId, UserRepository $repository, EntityManagerInterface $manager)
     {
-        $registredUser = $repository->findUser($userId);
+        $registeredUser = $repository->findUser($userId);
 
-        if(empty($registredUser)){
+        if(empty($registeredUser)){
             return new View('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
         }
 
-        $registredUser=$registredUser[0];
-        $registredUser
+        $registeredUser=$registeredUser[0];
+        $registeredUser
             ->setUsername($user->getUsername())
             ->setEmail($user->getEmail())
             ->setPassword($user->getPassword());
 
-        $manager->persist($registredUser);
+        $manager->persist($registeredUser);
         $manager->flush();
 
-        return $this->view($registredUser, Response::HTTP_CREATED);
+        return $this->view($registeredUser, Response::HTTP_CREATED);
     }
 
     /**
      * @Rest\Delete(
-     *     path = "/deleteuser/{userId}",
-     *     name = "modify_user")
+     *     path = "/users/{userId}",
+     *     name = "delete_user")
      * @param $userId
      * @param UserRepository $repository
      * @return View
