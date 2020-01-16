@@ -9,10 +9,13 @@ use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\View\View;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
  * Class UserController
@@ -21,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 class UserController extends AbstractFOSRestController
 {
     /**
-     * @Get(
+     * @Rest\Get(
      *     path = "/users/{clientId}",
      *     name = "view_users")
      */
@@ -37,7 +40,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Get(
-     *     path = "/user/{clientId}/{userId}",
+     *     path = "/users/{clientId}/{userId}",
      *     name = "view_user")
      * @param User|null $user
      * @param UserRepository $userRepository
@@ -59,63 +62,82 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Post(
-     *     path = "/newuser",
+     *     path = "/users/{clientId}",
      *     name = "new_user")
-     * @param Request $request
+     * @ParamConverter("user", converter="fos_rest.request_body")
+     * @param User $user
      * @param EntityManagerInterface $manager
+     * @param ValidatorInterface $validator
+     * @param $clientId
      * @param ClientRepository $repository
-     * @return User
+     * @return View
      */
-    public function newUser(Request $request, EntityManagerInterface $manager, ClientRepository $repository)
+    public function newUser(User $user, EntityManagerInterface $manager, ValidatorInterface $validator, $clientId,
+                            ClientRepository $repository)
     {
-        $data = json_decode($request->getContent(), true);
-
-        $clientId = $data['client']['id'];
         $client = $repository->findClient($clientId);
+        $user->setClient($client[0]);
 
-        if ($client) {
-            $user = new User();
-            $user->createUserObject($data);
-            $user->setClient($client[0]);
-
-            $manager->persist($user);
-            $manager->flush();
-
-            return $user;
+        $validatorResults = $validator->validate($user, null, null);
+        if(count($validatorResults) > 0){
+            return $this->view($validatorResults, Response::HTTP_BAD_REQUEST);
         }
+
+        $manager->persist($user);
+        $manager->flush();
+
+        return $this->view($user, Response::HTTP_CREATED);
     }
 
     /**
      * @Rest\Put(
-     *     path = "/modifyuser/{userId}",
+     *     path = "/users/{userId}",
      *     name = "modify_user")
-     * @param Request $request
-     * @param EntityManagerInterface $manager
-     * @param ClientRepository $repository
-     * @param UserRepository $userRepository
-     * @return User
+     * @ParamConverter("user", converter="fos_rest.request_body")
+     * @param $userId
+     * @param UserRepository $repository
+     * @return View
      */
-    public function modifyUser(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, $userId)
+    public function modifyUser(User $user, $userId, UserRepository $repository, EntityManagerInterface $manager)
     {
-        $data = json_decode($request->getContent(), true);
+        $registeredUser = $repository->findUser($userId);
 
-        $user = ($userRepository->findUser($userId))[0];
-
-        if ($user){
-            if($data['username']){
-                $user->setUsername($data['username']);
-            }
-            if ($data['password']){
-                $user->setPassword($data['password']);
-            }
-            if ($data['email']){
-                $user->setEmail($data['email']);
-            }
-
-            $manager->persist($user);
-            $manager->flush();
-
-            return $user;
+        if(empty($registeredUser)){
+            return new View('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
         }
+
+        $registeredUser=$registeredUser[0];
+        $registeredUser
+            ->setUsername($user->getUsername())
+            ->setEmail($user->getEmail())
+            ->setPassword($user->getPassword());
+
+        $manager->persist($registeredUser);
+        $manager->flush();
+
+        return $this->view($registeredUser, Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Rest\Delete(
+     *     path = "/users/{userId}",
+     *     name = "delete_user")
+     * @param $userId
+     * @param UserRepository $repository
+     * @return View
+     */
+    public function deleteUser($userId, UserRepository $repository, EntityManagerInterface $manager)
+    {
+        $registredUser = $repository->findUser($userId);
+
+        if(empty($registredUser)){
+            return new View('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
+        }
+
+        $registredUser = $registredUser[0];
+        $manager->remove($registredUser);
+        $manager->flush();
+
+        return new View('L\'utilisateur a été supprimé');
     }
 }
