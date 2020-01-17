@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -27,6 +28,7 @@ class UserController extends AbstractFOSRestController
      * @Rest\Get(
      *     path = "/users/{clientId}",
      *     name = "view_users")
+     * @IsGranted("ROLE_CLIENT")
      */
     public function viewUsers(User $user = null, UserRepository $userRepository, SerializerInterface $serializer, $clientId)
     {
@@ -48,6 +50,7 @@ class UserController extends AbstractFOSRestController
      * @param $clientId
      * @param $userId
      * @return Response
+     * @IsGranted("ROLE_CLIENT")
      */
     public function viewUser(User $user = null, UserRepository $userRepository, SerializerInterface $serializer,
             $clientId, $userId)
@@ -61,16 +64,12 @@ class UserController extends AbstractFOSRestController
     }
 
     /**
+     * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post(
      *     path = "/users/{clientId}",
      *     name = "new_user")
      * @ParamConverter("user", converter="fos_rest.request_body")
-     * @param User $user
-     * @param EntityManagerInterface $manager
-     * @param ValidatorInterface $validator
-     * @param $clientId
-     * @param ClientRepository $repository
-     * @return View
+     * @IsGranted("ROLE_CLIENT")
      */
     public function newUser(User $user, EntityManagerInterface $manager, ValidatorInterface $validator, $clientId,
                             ClientRepository $repository)
@@ -86,7 +85,7 @@ class UserController extends AbstractFOSRestController
         $manager->persist($user);
         $manager->flush();
 
-        return $this->view($user, Response::HTTP_CREATED);
+        return $user;
     }
 
     /**
@@ -97,6 +96,7 @@ class UserController extends AbstractFOSRestController
      * @param $userId
      * @param UserRepository $repository
      * @return View
+     * @IsGranted("ROLE_CLIENT")
      */
     public function modifyUser(User $user, $userId, UserRepository $repository, EntityManagerInterface $manager)
     {
@@ -125,6 +125,7 @@ class UserController extends AbstractFOSRestController
      * @param $userId
      * @param UserRepository $repository
      * @return View
+     * @IsGranted("ROLE_CLIENT")
      */
     public function deleteUser($userId, UserRepository $repository, EntityManagerInterface $manager)
     {

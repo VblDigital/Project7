@@ -34,9 +34,9 @@ class Client implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="json")
      */
-    private $role;
+    private $roles = [];
 
     /**
      * @ORM\ManyToMany(targetEntity="Product", mappedBy="products", cascade={"persist"})
@@ -103,18 +103,6 @@ class Client implements UserInterface
         return $this;
     }
 
-    public function getRole(): ?string
-    {
-        return $this->role;
-    }
-
-    public function setRole(string $role): self
-    {
-        $this->role = $role;
-
-        return $this;
-    }
-
     public function addProduct(Product $products)
     {
         $this->products[] = $products;
@@ -147,9 +135,22 @@ class Client implements UserInterface
         return $this;
     }
 
-    public function getRoles()
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
     {
-        return ['ROLE_CLIENT'];
+        $roles = $this->roles;
+        $roles[] = 'ROLE_CLIENT';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
 
     /**
@@ -161,10 +162,11 @@ class Client implements UserInterface
     }
 
     /**
-     * @return string
+     * @see UserInterface
      */
-    public function getUsername()
+    public function getUsername(): string
     {
+        return (string) $this->email;
     }
 
     public function eraseCredentials()
