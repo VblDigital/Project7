@@ -10,12 +10,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
  * Class UserController
@@ -28,10 +28,15 @@ class UserController extends AbstractFOSRestController
      *     path = "/users/{clientId}",
      *     name = "view_users")
      */
-    public function viewUsers(User $user = null, UserRepository $userRepository, SerializerInterface $serializer, $clientId)
+    public function viewUsers(User $user = null, UserRepository $userRepository, SerializerInterface $serializer,
+                              $clientId, PaginatorInterface $pager, Request $request)
     {
-        $users = $userRepository->findAllUsers($clientId);
-        $data = $serializer->serialize($users, 'json');
+        $query = $userRepository->findAllUsersQuery($clientId);
+        $paginated = $pager->paginate(
+            $query,
+            $request->query->getInt('page', 1), $request->query->getInt('limit', 10));
+
+        $data = $serializer->serialize($paginated, 'json');
 
         return new Response($data, 200, [
             'Content-Type' => 'application/json'
@@ -62,7 +67,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Post(
-     *     path = "/newuser/{clientId}",
+     *     path = "/users/{clientId}",
      *     name = "new_user")
      * @ParamConverter("user", converter="fos_rest.request_body")
      * @param User $user
@@ -91,7 +96,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Put(
-     *     path = "/modifyuser/{userId}",
+     *     path = "/users/{userId}",
      *     name = "modify_user")
      * @ParamConverter("user", converter="fos_rest.request_body")
      * @param $userId
@@ -120,7 +125,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Delete(
-     *     path = "/deleteuser/{userId}",
+     *     path = "/users/{userId}",
      *     name = "modify_user")
      * @param $userId
      * @param UserRepository $repository

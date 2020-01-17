@@ -23,13 +23,13 @@ class UserRepository extends ServiceEntityRepository
      * @param $clientId
      * @return mixed
      */
-    public function findAllUsers($clientId)
+    public function findAllUsersQuery($clientId)
     {
         $query = $this->createQueryBuilder('user')
             ->where('user.client = :clientId')
             ->setParameter('clientId', $clientId);
 
-        return $results = $query->getQuery()->getResult();
+        return $query;
     }
 
     /**
