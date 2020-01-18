@@ -10,12 +10,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
  * Class UserController
@@ -28,10 +28,15 @@ class UserController extends AbstractFOSRestController
      *     path = "/users/{clientId}",
      *     name = "view_users")
      */
-    public function viewUsers(User $user = null, UserRepository $userRepository, SerializerInterface $serializer, $clientId)
+    public function viewUsers(User $user = null, UserRepository $userRepository, SerializerInterface $serializer,
+                              $clientId, PaginatorInterface $pager, Request $request)
     {
-        $users = $userRepository->findAllUsers($clientId);
-        $data = $serializer->serialize($users, 'json');
+        $query = $userRepository->findAllUsersQuery($clientId);
+        $paginated = $pager->paginate(
+            $query,
+            $request->query->getInt('page', 1), $request->query->getInt('limit', 10));
+
+        $data = $serializer->serialize($paginated, 'json');
 
         return new Response($data, 200, [
             'Content-Type' => 'application/json'
@@ -49,8 +54,7 @@ class UserController extends AbstractFOSRestController
      * @param $userId
      * @return Response
      */
-    public function viewUser(User $user = null, UserRepository $userRepository, SerializerInterface $serializer,
-            $clientId, $userId)
+    public function viewUser(User $user = null, $clientId, $userId, UserRepository $userRepository, SerializerInterface $serializer)
     {
         $user = $userRepository->findOneUser($clientId, $userId);
         $data = $serializer->serialize($user, 'json');
@@ -72,7 +76,7 @@ class UserController extends AbstractFOSRestController
      * @param ClientRepository $repository
      * @return View
      */
-    public function newUser(User $user, EntityManagerInterface $manager, ValidatorInterface $validator, $clientId,
+    public function newUser(User $user, $clientId, EntityManagerInterface $manager, ValidatorInterface $validator,
                             ClientRepository $repository)
     {
         $client = $repository->findClient($clientId);
