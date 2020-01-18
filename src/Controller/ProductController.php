@@ -27,8 +27,8 @@ class ProductController extends AbstractFOSRestController
      * @param Request $request
      * @return Response
      */
-    public function viewProducts(Product $product = null, ProductRepository $productRepository,
-         SerializerInterface $serializer, $clientId, PaginatorInterface $pager, Request $request)
+    public function viewProducts(Request $request, Product $product = null, $clientId, ProductRepository $productRepository,
+         SerializerInterface $serializer, PaginatorInterface $pager)
     {
         $query = $productRepository->findAllProductsQuery($clientId);
         $paginated = $pager->paginate(
@@ -53,8 +53,8 @@ class ProductController extends AbstractFOSRestController
      * @param $productId
      * @return Response
      */
-    public function viewProduct(Product $product = null, ProductRepository $productRepository,
-         SerializerInterface $serializer, $clientId, $productId)
+    public function viewProduct(Product $product = null, $clientId, $productId, ProductRepository $productRepository,
+         SerializerInterface $serializer)
     {
         $product = $productRepository->findOneProduct($clientId, $productId)->getQuery()->getResult();
         $data = $serializer->serialize($product, 'json');

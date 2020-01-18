@@ -54,8 +54,7 @@ class UserController extends AbstractFOSRestController
      * @param $userId
      * @return Response
      */
-    public function viewUser(User $user = null, UserRepository $userRepository, SerializerInterface $serializer,
-            $clientId, $userId)
+    public function viewUser(User $user = null, $clientId, $userId, UserRepository $userRepository, SerializerInterface $serializer)
     {
         $user = $userRepository->findOneUser($clientId, $userId);
         $data = $serializer->serialize($user, 'json');
@@ -77,7 +76,7 @@ class UserController extends AbstractFOSRestController
      * @param ClientRepository $repository
      * @return View
      */
-    public function newUser(User $user, EntityManagerInterface $manager, ValidatorInterface $validator, $clientId,
+    public function newUser(User $user, $clientId, EntityManagerInterface $manager, ValidatorInterface $validator,
                             ClientRepository $repository)
     {
         $client = $repository->findClient($clientId);
