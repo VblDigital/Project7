@@ -21,8 +21,8 @@ class ClientFixtures extends Fixture
         $client = new Client();
         $client
             ->setName("Client type")
-            ->setEmail('client1@client1.com')
-            ->setRole('ROLE_CLIENT');
+            ->setEmail("client1@client1.com")
+            ->setRole('{"ROLE": "ROLE_CLIENT"}');
         $hash = password_hash('123456', PASSWORD_BCRYPT);
         $client->setPassword($hash);
         $manager->persist($client);
