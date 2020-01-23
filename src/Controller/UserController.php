@@ -30,8 +30,8 @@ class UserController extends AbstractFOSRestController
      *     name = "view_users")
      * @IsGranted("ROLE_CLIENT")
      */
-    public function viewUsers(User $user = null, UserRepository $userRepository, SerializerInterface $serializer,
-                              $clientId, PaginatorInterface $pager, Request $request)
+    public function viewUsers(Request $request, User $user = null, UserRepository $userRepository, SerializerInterface $serializer,
+                              $clientId, PaginatorInterface $pager)
     {
         $query = $userRepository->findAllUsersQuery($clientId);
         $paginated = $pager->paginate(

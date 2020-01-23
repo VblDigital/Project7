@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Knp\Component\Pager\PaginatorInterface;
-use Knp\Bundle\PaginatorBundle\Templating\PaginationHelper;
 
 class ProductController extends AbstractFOSRestController
 {
