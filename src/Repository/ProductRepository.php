@@ -26,14 +26,14 @@ class ProductRepository extends ServiceEntityRepository
      * @param $clientId
      * @return mixed
      */
-    public function findAllProducts($clientId)
+    public function findAllProductsQuery($clientId)
     {
         $query = $this->createQueryBuilder('product')
             ->leftJoin('product.clients', 'c')
             ->where('c.id = :clientId')
             ->setParameter('clientId', $clientId);
 
-        return $results = $query->getQuery()->getResult();
+        return $query;
     }
 
     /**
@@ -49,6 +49,6 @@ class ProductRepository extends ServiceEntityRepository
             ->andWhere('product.id = :productId')
             ->setParameters(array('clientId' => $clientId, 'productId' => $productId));
 
-        return $results = $query->getQuery()->getResult();
+        return $query;
     }
 }
