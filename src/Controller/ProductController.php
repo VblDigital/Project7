@@ -34,7 +34,10 @@ class ProductController extends AbstractFOSRestController
             $query,
             $request->query->getInt('page', 1), $request->query->getInt('limit', 10));
 
-        $data = $serializer->serialize($paginated, 'json');
+        $data = $serializer->serialize(
+            $paginated,
+            'json',
+            ['groups' => 'list']);
 
         return new Response($data, 200, [
             'Content-Type' => 'application/json'
@@ -56,7 +59,10 @@ class ProductController extends AbstractFOSRestController
          SerializerInterface $serializer)
     {
         $product = $productRepository->findOneProduct($clientId, $productId)->getQuery()->getResult();
-        $data = $serializer->serialize($product, 'json');
+        $data = $serializer->serialize(
+            $product,
+            'json',
+            ['groups' => 'detail']);
 
         return new Response($data, 200, [
             'Content-Type' => 'application/json'
