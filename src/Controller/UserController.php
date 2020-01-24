@@ -9,7 +9,6 @@ use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Controller\Annotations\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -92,6 +91,9 @@ class UserController extends AbstractFOSRestController
             return $this->view($validatorResults, Response::HTTP_BAD_REQUEST);
         }
 
+        $hash = password_hash($user->getPassword(), PASSWORD_BCRYPT);
+        $user->setPassword($hash);
+
         $manager->persist($user);
         $manager->flush();
 
@@ -107,7 +109,7 @@ class UserController extends AbstractFOSRestController
      * @param $userId
      * @param UserRepository $repository
      * @param EntityManagerInterface $manager
-     * @return View
+     * @return string
      * @IsGranted("ROLE_CLIENT")
      */
     public function modifyUser(User $user, $userId, UserRepository $repository, EntityManagerInterface $manager)
@@ -115,14 +117,15 @@ class UserController extends AbstractFOSRestController
         $registeredUser = $repository->findUser($userId);
 
         if(empty($registeredUser)){
-            return new View('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
+            return $this->view('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
         }
 
         $registeredUser=$registeredUser[0];
         $registeredUser
             ->setUsername($user->getUsername())
-            ->setEmail($user->getEmail())
-            ->setPassword($user->getPassword());
+            ->setEmail($user->getEmail());
+        $hash = password_hash($user->getPassword(), PASSWORD_BCRYPT);
+        $registeredUser->setPassword($hash);
 
         $manager->persist($registeredUser);
         $manager->flush();
@@ -136,21 +139,21 @@ class UserController extends AbstractFOSRestController
      *     name = "delete_user")
      * @param $userId
      * @param UserRepository $repository
-     * @return View
      * @IsGranted("ROLE_CLIENT")
+     * @return string
      */
     public function deleteUser($userId, UserRepository $repository, EntityManagerInterface $manager)
     {
         $registredUser = $repository->findUser($userId);
 
         if(empty($registredUser)){
-            return new View('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
+            return $this->view('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
         }
 
         $registredUser = $registredUser[0];
         $manager->remove($registredUser);
         $manager->flush();
 
-        return new View('L\'utilisateur a été supprimé');
+        return $this->view('L\'utilisateur a été supprimé');
     }
 }

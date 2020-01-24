@@ -6,13 +6,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
  * @UniqueEntity(
  *     fields={"name"},
- *     message="Ce nom de produit est déjà utilisée"
- * )
+ *     message="Ce nom de produit est déjà utilisée")
  */
 class Product
 {
@@ -27,30 +27,35 @@ class Product
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"detail", "list"})
+     * @Assert\NotBlank
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"detail", "list"})
+     * @Assert\NotBlank
      */
     private $reference;
 
     /**
      * @ORM\Column(type="text")
      * @Groups({"detail"})
+     * @Assert\NotBlank
      */
     private $description;
 
     /**
      * @ORM\Column(type="string")
      * @Groups({"detail"})
+     * @Assert\NotBlank
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer")
      * @Groups({"detail"})
+     * @Assert\NotBlank
      */
     private $stock;
 

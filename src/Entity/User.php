@@ -3,11 +3,15 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity(
+ *     fields={"email"},
+ *     message="Un compte est déjà rattaché à cet email")
  */
 class User
 {
@@ -22,23 +26,27 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"detail", "list"})
+     * @Assert\NotBlank
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"detail"})
+     * @Assert\NotBlank
      */
     private $email;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Client", inversedBy="users", cascade={"persist"})
      * @ORM\JoinColumn(name="client_ìd", referencedColumnName="id", nullable=false)
+     * @Assert\NotBlank
      */
     private $client;
 
