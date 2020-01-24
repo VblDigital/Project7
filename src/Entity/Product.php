@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
@@ -19,31 +20,37 @@ class Product
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"detail", "list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"detail", "list"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"detail", "list"})
      */
     private $reference;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"detail"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string")
+     * @Groups({"detail"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"detail"})
      */
     private $stock;
 
