@@ -51,7 +51,8 @@ class UserController extends AbstractFOSRestController
     /**
      * @Rest\Get(
      *     path = "/users/{clientId}/{userId}",
-     *     name = "view_user")
+     *     name = "view_user",
+     *     requirements={"clientId"="\d+", "userId"="\d+"})
      * @param User|null $user
      * @param UserRepository $userRepository
      * @param SerializerInterface $serializer
