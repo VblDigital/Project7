@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Knp\Component\Pager\PaginatorInterface;
-use Knp\Bundle\PaginatorBundle\Templating\PaginationHelper;
 
 class ProductController extends AbstractFOSRestController
 {
@@ -35,7 +34,10 @@ class ProductController extends AbstractFOSRestController
             $query,
             $request->query->getInt('page', 1), $request->query->getInt('limit', 10));
 
-        $data = $serializer->serialize($paginated, 'json');
+        $data = $serializer->serialize(
+            $paginated,
+            'json',
+            ['groups' => 'list']);
 
         return new Response($data, 200, [
             'Content-Type' => 'application/json'
@@ -57,7 +59,10 @@ class ProductController extends AbstractFOSRestController
          SerializerInterface $serializer)
     {
         $product = $productRepository->findOneProduct($clientId, $productId)->getQuery()->getResult();
-        $data = $serializer->serialize($product, 'json');
+        $data = $serializer->serialize(
+            $product,
+            'json',
+            ['groups' => 'detail']);
 
         return new Response($data, 200, [
             'Content-Type' => 'application/json'

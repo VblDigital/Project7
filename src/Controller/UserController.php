@@ -9,7 +9,7 @@ use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\View\View;
+use FOS\RestBundle\Controller\Annotations\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -30,15 +30,18 @@ class UserController extends AbstractFOSRestController
      *     name = "view_users")
      * @IsGranted("ROLE_CLIENT")
      */
-    public function viewUsers(User $user = null, UserRepository $userRepository, SerializerInterface $serializer,
-                              $clientId, PaginatorInterface $pager, Request $request)
+    public function viewUsers(Request $request, User $user = null, UserRepository $userRepository, SerializerInterface $serializer,
+                              $clientId, PaginatorInterface $pager)
     {
         $query = $userRepository->findAllUsersQuery($clientId);
         $paginated = $pager->paginate(
             $query,
             $request->query->getInt('page', 1), $request->query->getInt('limit', 10));
 
-        $data = $serializer->serialize($paginated, 'json');
+        $data = $serializer->serialize(
+            $paginated,
+            'json',
+            ['groups' => 'list']);
 
         return new Response($data, 200, [
             'Content-Type' => 'application/json'
@@ -60,7 +63,10 @@ class UserController extends AbstractFOSRestController
     public function viewUser(User $user = null, $clientId, $userId, UserRepository $userRepository, SerializerInterface $serializer)
     {
         $user = $userRepository->findOneUser($clientId, $userId);
-        $data = $serializer->serialize($user, 'json');
+        $data = $serializer->serialize(
+            $user,
+            'json',
+            ['groups' => 'detail']);
 
         return new Response($data, 200, [
             'Content-Type' => 'application/json'
@@ -97,8 +103,10 @@ class UserController extends AbstractFOSRestController
      *     path = "/users/{userId}",
      *     name = "modify_user")
      * @ParamConverter("user", converter="fos_rest.request_body")
+     * @param User $user
      * @param $userId
      * @param UserRepository $repository
+     * @param EntityManagerInterface $manager
      * @return View
      * @IsGranted("ROLE_CLIENT")
      */
