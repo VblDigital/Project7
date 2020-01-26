@@ -13,6 +13,7 @@ use FOS\RestBundle\Controller\Annotations\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -26,14 +27,21 @@ class UserController extends AbstractFOSRestController
 {
     /**
      * @Rest\Get(
-     *     path = "/users/{clientId}",
+     *     path = "/users",
      *     name = "view_users")
      * @IsGranted("ROLE_CLIENT")
+     * @param Request $request
+     * @param User|null $user
+     * @param UserRepository $userRepository
+     * @param SerializerInterface $serializer
+     * @param PaginatorInterface $pager
+     * @param Security $security
+     * @return Response
      */
     public function viewUsers(Request $request, User $user = null, UserRepository $userRepository, SerializerInterface $serializer,
-                              $clientId, PaginatorInterface $pager)
+                              PaginatorInterface $pager, Security $security)
     {
-        $query = $userRepository->findAllUsersQuery($clientId);
+        $query = $userRepository->findAllUsersQuery($security->getUser()->getId());
         $paginated = $pager->paginate(
             $query,
             $request->query->getInt('page', 1), $request->query->getInt('limit', 10));
@@ -50,28 +58,20 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Get(
-     *     path = "/users/{clientId}/{userId}",
+     *     path = "/users/{userId}",
      *     name = "view_user",
-     *     requirements={"clientId"="\d+", "userId"="\d+"})
-     * @param User|null $user
-     * @param UserRepository $userRepository
-     * @param SerializerInterface $serializer
-     * @param $clientId
+     *     requirements={"userId"="\d+"})
+     * @View(serializerGroups={"detail"})
      * @param $userId
+     * @param UserRepository $userRepository
+     * @param Security $security
      * @return Response
      * @IsGranted("ROLE_CLIENT")
      */
-    public function viewUser(User $user = null, $clientId, $userId, UserRepository $userRepository, SerializerInterface $serializer)
+    public function viewUser($userId, UserRepository $userRepository, Security $security)
     {
-        $user = $userRepository->findOneUser($clientId, $userId);
-        $data = $serializer->serialize(
-            $user,
-            'json',
-            ['groups' => 'detail']);
+        return $userRepository->findOneUser($security->getUser()->getId(), $userId);
 
-        return new Response($data, 200, [
-            'Content-Type' => 'application/json'
-        ]);
     }
 
     /**

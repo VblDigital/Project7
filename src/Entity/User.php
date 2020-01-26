@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Groups;
 use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
@@ -11,12 +11,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  * @ORM\Table()
  * @Hateoas\Relation(
  *      "self",
- *      href = @Hateoas\Route(
- *          "view_users",
- *          parameters = { "id" = "expr(object.getId())" },
- *          absolute = true
- *      ),
- *     exclusion = @Hateoas\Exclusion(groups={"detail"})
+ *      href = "toto"
  * )
  */
 class User

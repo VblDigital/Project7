@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4df06567990c03761dd113b036fa5b20",
+    "content-hash": "75cabc1ab43ee257e519b5038c0ba788",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -7337,7 +7337,7 @@
         },
         {
             "name": "willdurand/hateoas-bundle",
-            "version": "2.1.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/willdurand/BazingaHateoasBundle.git",
@@ -8413,7 +8413,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "willdurand/hateoas-bundle": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
