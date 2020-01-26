@@ -25,7 +25,7 @@ class ProductController extends AbstractFOSRestController
     {
         return $productRepository->findAllProductsQuery($security->getUser()->getId());
     }
-ha
+
     /**
      * @Get(
      *     path = "/products/{productId}",
