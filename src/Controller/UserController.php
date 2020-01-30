@@ -9,7 +9,6 @@ use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Controller\Annotations\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Security\Core\Security;
@@ -130,12 +129,14 @@ class UserController extends AbstractFOSRestController
      * @param UserRepository $repository
      * @IsGranted("ROLE_CLIENT")
      * @return \FOS\RestBundle\View\View
+
      */
     public function deleteUser($userId, UserRepository $repository, EntityManagerInterface $manager)
     {
         $registeredUser = $repository->findUser($userId);
 
         if(empty($registeredUser)){
+
             return $this->view('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
         }
 

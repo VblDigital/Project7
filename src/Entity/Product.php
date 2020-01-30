@@ -48,30 +48,35 @@ class Product
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"detail", "list"})
+     * @Assert\NotBlank
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"detail", "list"})
+     * @Assert\NotBlank
      */
     private $reference;
 
     /**
      * @ORM\Column(type="text")
      * @Groups({"detail"})
+     * @Assert\NotBlank
      */
     private $description;
 
     /**
      * @ORM\Column(type="string")
      * @Groups({"detail"})
+     * @Assert\NotBlank
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer")
      * @Groups({"detail"})
+     * @Assert\NotBlank
      */
     private $stock;
 
