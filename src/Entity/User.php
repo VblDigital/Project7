@@ -10,34 +10,70 @@ use Hateoas\Configuration\Annotation as Hateoas;
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table()
  * @Hateoas\Relation(
- *      "self",
- *      href = "toto"
+ *    "self",
+ *    href = @Hateoas\Route(
+ *        "view_user",
+ *        parameters = {"userId" = "expr(object.getId())"},
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"detail"})
+ * )
+ *
+ *  * @Hateoas\Relation(
+ *    "self",
+ *    href = @Hateoas\Route(
+ *        "view_users",
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"list"})
+ * )
+ *
+ *   @Hateoas\Relation(
+ *    "update",
+ *    href = @Hateoas\Route(
+ *        "modify_user",
+ *        parameters = {"userId" = "expr(object.getId())"},
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"detail"})
+ * )
+ *
+ *   @Hateoas\Relation(
+ *    "delete",
+ *    href = @Hateoas\Route(
+ *        "delete_user",
+ *        parameters = {"userId" = "expr(object.getId())"},
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"detail"})
  * )
  */
+
 class User
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"detail", "list"})
+     * @Groups({"detail", "list", "credentials"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"detail", "list"})
+     * @Groups({"detail", "list", "credentials"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"credentials"})
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"detail"})
+     * @Groups({"detail", "credentials"})
      */
     private $email;
 

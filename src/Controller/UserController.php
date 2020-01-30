@@ -11,13 +11,10 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class UserController
@@ -29,38 +26,22 @@ class UserController extends AbstractFOSRestController
      * @Rest\Get(
      *     path = "/users",
      *     name = "view_users")
+     * @View(serializerGroups={"list"})
      * @IsGranted("ROLE_CLIENT")
-     * @param Request $request
-     * @param User|null $user
      * @param UserRepository $userRepository
-     * @param SerializerInterface $serializer
-     * @param PaginatorInterface $pager
      * @param Security $security
      * @return Response
      */
-    public function viewUsers(Request $request, User $user = null, UserRepository $userRepository, SerializerInterface $serializer,
-                              PaginatorInterface $pager, Security $security)
+    public function viewUsers(UserRepository $userRepository, Security $security)
     {
-        $query = $userRepository->findAllUsersQuery($security->getUser()->getId());
-        $paginated = $pager->paginate(
-            $query,
-            $request->query->getInt('page', 1), $request->query->getInt('limit', 10));
-
-        $data = $serializer->serialize(
-            $paginated,
-            'json',
-            ['groups' => 'list']);
-
-        return new Response($data, 200, [
-            'Content-Type' => 'application/json'
-        ]);
+        return $userRepository->findAllUsersQuery($security->getUser()->getId());
     }
 
     /**
      * @Rest\Get(
      *     path = "/users/{userId}",
      *     name = "view_user",
-     *     requirements={"userId"="\d+"})
+     *     requirements={"id"="\d+"})
      * @View(serializerGroups={"detail"})
      * @param $userId
      * @param UserRepository $userRepository
@@ -71,27 +52,35 @@ class UserController extends AbstractFOSRestController
     public function viewUser($userId, UserRepository $userRepository, Security $security)
     {
         return $userRepository->findOneUser($security->getUser()->getId(), $userId);
-
     }
 
     /**
-     * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post(
-     *     path = "/users/{clientId}",
+     *     path = "/users",
      *     name = "new_user")
+     * @View(serializerGroups={"credentials"})
      * @ParamConverter("user", converter="fos_rest.request_body")
      * @IsGranted("ROLE_CLIENT")
+     * @param User $user
+     * @param EntityManagerInterface $manager
+     * @param ValidatorInterface $validator
+     * @param ClientRepository $repository
+     * @param Security $security
+     * @return User
      */
-    public function newUser(User $user, $clientId, EntityManagerInterface $manager, ValidatorInterface $validator,
-                            ClientRepository $repository)
+    public function newUser(User $user, EntityManagerInterface $manager, ValidatorInterface $validator,
+                            ClientRepository $repository, Security $security)
     {
-        $client = $repository->findClient($clientId);
+        $client = $repository->findClient($security->getUser()->getId());
         $user->setClient($client[0]);
 
         $validatorResults = $validator->validate($user, null, null);
         if(count($validatorResults) > 0){
             return $this->view($validatorResults, Response::HTTP_BAD_REQUEST);
         }
+
+        $hash = password_hash($user->getPassword(), PASSWORD_BCRYPT);
+        $user->setPassword($hash);
 
         $manager->persist($user);
         $manager->flush();
@@ -103,55 +92,57 @@ class UserController extends AbstractFOSRestController
      * @Rest\Put(
      *     path = "/users/{userId}",
      *     name = "modify_user")
+     * @View(serializerGroups={"credentials"})
      * @ParamConverter("user", converter="fos_rest.request_body")
      * @param User $user
      * @param $userId
      * @param UserRepository $repository
      * @param EntityManagerInterface $manager
-     * @return View
      * @IsGranted("ROLE_CLIENT")
+     * @return \FOS\RestBundle\View\View
      */
     public function modifyUser(User $user, $userId, UserRepository $repository, EntityManagerInterface $manager)
     {
         $registeredUser = $repository->findUser($userId);
 
         if(empty($registeredUser)){
-            return new View('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
+            return $this->view('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
         }
 
-        $registeredUser=$registeredUser[0];
+        $registeredUser = $registeredUser[0];
         $registeredUser
             ->setUsername($user->getUsername())
-            ->setEmail($user->getEmail())
-            ->setPassword($user->getPassword());
+            ->setPassword(password_hash($user->getPassword(), PASSWORD_BCRYPT))
+            ->setEmail($user->getEmail());
 
         $manager->persist($registeredUser);
         $manager->flush();
 
-        return $this->view($registeredUser, Response::HTTP_CREATED);
+        return $this->view($registeredUser, Response::HTTP_ACCEPTED);
     }
 
     /**
      * @Rest\Delete(
      *     path = "/users/{userId}",
      *     name = "delete_user")
+     * @View(serializerGroups={"credentials"})
      * @param $userId
      * @param UserRepository $repository
-     * @return View
      * @IsGranted("ROLE_CLIENT")
+     * @return \FOS\RestBundle\View\View
      */
     public function deleteUser($userId, UserRepository $repository, EntityManagerInterface $manager)
     {
-        $registredUser = $repository->findUser($userId);
+        $registeredUser = $repository->findUser($userId);
 
-        if(empty($registredUser)){
-            return new View('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
+        if(empty($registeredUser)){
+            return $this->view('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
         }
 
-        $registredUser = $registredUser[0];
-        $manager->remove($registredUser);
+        $registeredUser = $registeredUser[0];
+        $manager->remove($registeredUser);
         $manager->flush();
 
-        return new View('L\'utilisateur a été supprimé');
+        return $this->view('L\'utilisateur a été supprimé');
     }
 }
