@@ -5,14 +5,35 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\Groups;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
+ * @ORM\Table()
  * @UniqueEntity(
  *     fields={"name"},
- *     message="Ce nom de produit est déjà utilisée")
+ *     message="Ce nom de produit est déjà utilisée"
+ * )
+ *
+ * @Hateoas\Relation(
+ *    "self",
+ *    href = @Hateoas\Route(
+ *        "view_products",
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"list"})
+ * )
+ *
+ *  * @Hateoas\Relation(
+ *    "self",
+ *    href = @Hateoas\Route(
+ *        "view_product",
+ *        parameters = {"productId" = "expr(object.getId())"},
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"detail"})
+ * )
  */
 class Product
 {

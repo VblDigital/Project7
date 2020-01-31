@@ -33,7 +33,7 @@ class ProductRepository extends ServiceEntityRepository
             ->where('c.id = :clientId')
             ->setParameter('clientId', $clientId);
 
-        return $query;
+        return $results = $query->getQuery()->getResult();
     }
 
     /**
@@ -49,6 +49,6 @@ class ProductRepository extends ServiceEntityRepository
             ->andWhere('product.id = :productId')
             ->setParameters(array('clientId' => $clientId, 'productId' => $productId));
 
-        return $query;
+        return $results = $query->getQuery()->getResult();
     }
 }

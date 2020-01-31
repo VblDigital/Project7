@@ -3,42 +3,80 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\Groups;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity(
- *     fields={"email"},
- *     message="Un compte est déjà rattaché à cet email")
+ * @ORM\Table()
+ * @Hateoas\Relation(
+ *    "self",
+ *    href = @Hateoas\Route(
+ *        "view_user",
+ *        parameters = {"userId" = "expr(object.getId())"},
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"detail"})
+ * )
+ *
+ *  * @Hateoas\Relation(
+ *    "self",
+ *    href = @Hateoas\Route(
+ *        "view_users",
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"list"})
+ * )
+ *
+ *   @Hateoas\Relation(
+ *    "update",
+ *    href = @Hateoas\Route(
+ *        "modify_user",
+ *        parameters = {"userId" = "expr(object.getId())"},
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"detail"})
+ * )
+ *
+ *   @Hateoas\Relation(
+ *    "delete",
+ *    href = @Hateoas\Route(
+ *        "delete_user",
+ *        parameters = {"userId" = "expr(object.getId())"},
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"detail"})
+ * )
  */
+
 class User
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"detail", "list"})
+     * @Groups({"detail", "list", "credentials"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"detail", "list"})
+     * @Groups({"detail", "list", "credentials"})
      * @Assert\NotBlank
+
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"credentials"})
      * @Assert\NotBlank
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"detail"})
+     * @Groups({"detail", "credentials"})
      * @Assert\NotBlank
      */
     private $email;
