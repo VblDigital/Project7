@@ -24,7 +24,7 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
         doc:
-            pattern: /api/doc
+            pattern: /doc
             anonymous: true
         api:
             pattern: ^/

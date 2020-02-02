@@ -9,6 +9,8 @@ use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 class ProductController extends AbstractFOSRestController
 {
@@ -17,6 +19,12 @@ class ProductController extends AbstractFOSRestController
      *     path = "/products",
      *     name = "view_products")
      * @View(serializerGroups={"list"})
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return the list of a available products",
+     *     @Model(type=Product::class)git status
+     * )
+     * @SWG\Tag(name="Products")
      * @param ProductRepository $productRepository
      * @param Security $security
      * @return Response
@@ -32,6 +40,12 @@ class ProductController extends AbstractFOSRestController
      *     name = "view_product",
      *     requirements={"id"="\d+"}))
      * @View(serializerGroups={"detail"})
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return the details of a product",
+     *     @Model(type=Product::class)
+     * )
+     * @SWG\Tag(name="Products")
      * @param ProductRepository $productRepository
      * @param Security $security
      * @return Response

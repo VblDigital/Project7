@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Swagger\Annotations as SWG;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
@@ -35,8 +36,14 @@ class Client implements UserInterface
 
     /**
      * @ORM\Column(type="json")
+     * @SWG\Property(type="json")
      */
     private $roles = [];
+
+    /**
+     * @SWG\Property(type="string")
+     */
+    private $salt;
 
     /**
      * @ORM\ManyToMany(targetEntity="Product", mappedBy="products", cascade={"persist"})
@@ -138,7 +145,7 @@ class Client implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): array
+    public function getRoles()
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_CLIENT';
@@ -146,7 +153,7 @@ class Client implements UserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles($roles): self
     {
         $this->roles = $roles;
 
