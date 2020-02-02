@@ -13,7 +13,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  * @ORM\Table()
  * @UniqueEntity(
  *     fields={"name"},
- *     message="Ce nom de produit est déjà utilisée"
+ *     message="Ce nom de produit est déjà utilisé"
  * )
  *
  * @Hateoas\Relation(

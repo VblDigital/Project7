@@ -3,10 +3,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Repository\ProductRepository;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
+use Nelmio\ApiDocBundle\Annotation\Areas;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -22,7 +24,7 @@ class ProductController extends AbstractFOSRestController
      * @SWG\Response(
      *     response=200,
      *     description="Return the list of a available products",
-     *     @Model(type=Product::class)git status
+     *     @Model(type=Product::class)
      * )
      * @SWG\Tag(name="Products")
      * @param ProductRepository $productRepository

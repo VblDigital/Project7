@@ -15,6 +15,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 /**
  * Class UserController
@@ -27,6 +29,12 @@ class UserController extends AbstractFOSRestController
      *     path = "/users",
      *     name = "view_users")
      * @View(serializerGroups={"list"})
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return the list of user",
+     *     @Model(type=User::class)
+     * )
+     * @SWG\Tag(name="Users")
      * @IsGranted("ROLE_CLIENT")
      * @param UserRepository $userRepository
      * @param Security $security
@@ -43,6 +51,12 @@ class UserController extends AbstractFOSRestController
      *     name = "view_user",
      *     requirements={"id"="\d+"})
      * @View(serializerGroups={"detail"})
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return the details for one user",
+     *     @Model(type=User::class)
+     * )
+     * @SWG\Tag(name="Users")
      * @param $userId
      * @param UserRepository $userRepository
      * @param Security $security
@@ -59,6 +73,12 @@ class UserController extends AbstractFOSRestController
      *     path = "/users",
      *     name = "new_user")
      * @View(serializerGroups={"credentials"})
+     * @SWG\Response(
+     *     response=200,
+     *     description="To add a new user",
+     *     @Model(type=User::class)
+     * )
+     * @SWG\Tag(name="Users")
      * @ParamConverter("user", converter="fos_rest.request_body")
      * @IsGranted("ROLE_CLIENT")
      * @param User $user
@@ -93,6 +113,12 @@ class UserController extends AbstractFOSRestController
      *     path = "/users/{userId}",
      *     name = "modify_user")
      * @View(serializerGroups={"credentials"})
+     * @SWG\Response(
+     *     response=200,
+     *     description="To modify an user",
+     *     @Model(type=User::class)
+     * )
+     * @SWG\Tag(name="Users")
      * @ParamConverter("user", converter="fos_rest.request_body")
      * @param User $user
      * @param $userId
@@ -126,6 +152,12 @@ class UserController extends AbstractFOSRestController
      *     path = "/users/{userId}",
      *     name = "delete_user")
      * @View(serializerGroups={"credentials"})
+     * @SWG\Response(
+     *     response=200,
+     *     description="To delete an user",
+     *     @Model(type=User::class)
+     * )
+     * @SWG\Tag(name="Users")
      * @param $userId
      * @param UserRepository $repository
      * @IsGranted("ROLE_CLIENT")
