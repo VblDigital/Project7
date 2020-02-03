@@ -3,14 +3,20 @@
 
 namespace App\Controller;
 
-use FOS\RestBundle\Controller\Annotations\Route;
+use FOS\RestBundle\Controller\Annotations\GET;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Swagger\Annotations as SWG;
 
 class SecurityController extends AbstractController
 {
     /**
-     * @Route(name="login", path="/login_check")
+     * @GET(name="login", path="/login_check")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Login's page for the client",
+     * )
+     * @SWG\Tag(name="Login")
      * @return JsonResponse
      */
     public function api_login(): JsonResponse
