@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Knp\Component\Pager\PaginatorInterface;
+use App\Service\CacheService;
+use Symfony\Component\Validator\Mapping\CascadingStrategy;
 
 class ProductController extends AbstractFOSRestController
 {
@@ -34,10 +36,11 @@ class ProductController extends AbstractFOSRestController
      * @param PaginatorInterface $pager
      * @param Request $request
      * @param SerializerInterface $serializer
-     * @return Response
+     * @param CacheService $cacheService
+     * @return CacheService
      */
     public function viewProducts(ProductRepository $productRepository, Security $security, PaginatorInterface $pager,
-                                 Request $request, SerializerInterface $serializer)
+                                 Request $request, SerializerInterface $serializer, CacheService $cacheService)
     {
         $query = $productRepository->findAllProductsQuery($security->getUser()->getId());
 
@@ -49,10 +52,11 @@ class ProductController extends AbstractFOSRestController
 
         $context = SerializationContext::create()->setGroups(array(
             'Default',
-            'items' => array('detail')
+            'items' => array('list')
         ));
 
-        return new Response($serializer->serialize($paginated, 'json', $context));
+        $response =  new Response($serializer->serialize($paginated, 'json', $context));
+        return $cacheService->cacheResponse($response);
     }
 
     /**
@@ -67,9 +71,10 @@ class ProductController extends AbstractFOSRestController
      *     @Model(type=Product::class)
      * )
      * @SWG\Tag(name="Products")
+     * @param $productId
      * @param ProductRepository $productRepository
      * @param Security $security
-     * @return Response
+     * @return CacheService
      */
     public function viewProduct($productId, ProductRepository $productRepository, Security $security)
     {

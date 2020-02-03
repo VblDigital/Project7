@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Repository\ClientRepository;
+use App\Service\CacheService;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -47,7 +48,7 @@ class UserController extends AbstractFOSRestController
      * @return Response
      */
     public function viewUsers(UserRepository $userRepository, Security $security, PaginatorInterface $pager,
-                              Request $request, SerializerInterface $serializer)
+                              Request $request, SerializerInterface $serializer,CacheService $cacheService)
     {
         $query = $userRepository->findAllUsersQuery($security->getUser()->getId());
 
@@ -62,7 +63,8 @@ class UserController extends AbstractFOSRestController
             'items' => array('detail')
         ));
 
-        return new Response($serializer->serialize($paginated, 'json', $context));
+        $response =  new Response($serializer->serialize($paginated, 'json', $context));
+        return $cacheService->cacheResponse($response);
     }
 
     /**
