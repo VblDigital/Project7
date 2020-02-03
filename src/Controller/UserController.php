@@ -10,8 +10,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -28,7 +32,6 @@ class UserController extends AbstractFOSRestController
      * @Rest\Get(
      *     path = "/users",
      *     name = "view_users")
-     * @View(serializerGroups={"list"})
      * @SWG\Response(
      *     response=200,
      *     description="Return the list of user",
@@ -38,11 +41,28 @@ class UserController extends AbstractFOSRestController
      * @IsGranted("ROLE_CLIENT")
      * @param UserRepository $userRepository
      * @param Security $security
+     * @param PaginatorInterface $pager
+     * @param Request $request
+     * @param SerializerInterface $serializer
      * @return Response
      */
-    public function viewUsers(UserRepository $userRepository, Security $security)
+    public function viewUsers(UserRepository $userRepository, Security $security, PaginatorInterface $pager,
+                              Request $request, SerializerInterface $serializer)
     {
-        return $userRepository->findAllUsersQuery($security->getUser()->getId());
+        $query = $userRepository->findAllUsersQuery($security->getUser()->getId());
+
+        $paginated = $pager->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 2)
+        );
+
+        $context = SerializationContext::create()->setGroups(array(
+            'Default',
+            'items' => array('detail')
+        ));
+
+        return new Response($serializer->serialize($paginated, 'json', $context));
     }
 
     /**
