@@ -182,12 +182,14 @@ class UserController extends AbstractFOSRestController
      * @param UserRepository $repository
      * @IsGranted("ROLE_CLIENT")
      * @return \FOS\RestBundle\View\View
+
      */
     public function deleteUser($userId, UserRepository $repository, EntityManagerInterface $manager)
     {
         $registeredUser = $repository->findUser($userId);
 
         if(empty($registeredUser)){
+
             return $this->view('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
         }
 
