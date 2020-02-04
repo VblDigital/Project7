@@ -6,13 +6,12 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Repository\ClientRepository;
-use App\Service\CacheService;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
+use Psr\Cache\InvalidArgumentException;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -27,7 +26,7 @@ use Swagger\Annotations as SWG;
  * Class UserController
  * @package App\Controller
  */
-class UserController extends AbstractFOSRestController
+class UserController extends ObjectManagerController
 {
     /**
      * @Rest\Get(
@@ -44,12 +43,21 @@ class UserController extends AbstractFOSRestController
      * @param Security $security
      * @param PaginatorInterface $pager
      * @param Request $request
-     * @param SerializerInterface $serializer
      * @return Response
+     * @throws InvalidArgumentException
      */
     public function viewUsers(UserRepository $userRepository, Security $security, PaginatorInterface $pager,
-                              Request $request, SerializerInterface $serializer,CacheService $cacheService)
+                              Request $request, SerializerInterface $serializer)
     {
+        $key = 'user.all';
+
+        $onCache = $this->adapter->getItem($key);
+
+        if (true === $onCache->isHit()){
+            $data = $onCache->get();
+            return $data;
+        }
+
         $query = $userRepository->findAllUsersQuery($security->getUser()->getId());
 
         $paginated = $pager->paginate(
@@ -63,8 +71,10 @@ class UserController extends AbstractFOSRestController
             'items' => array('detail')
         ));
 
-        $response =  new Response($serializer->serialize($paginated, 'json', $context));
-        return $cacheService->cacheResponse($response);
+        $data =  new Response($serializer->serialize($paginated, 'json', $context));
+        $this->cache->saveItem($key, $data);
+
+        return $data;
     }
 
     /**
@@ -83,11 +93,24 @@ class UserController extends AbstractFOSRestController
      * @param UserRepository $userRepository
      * @param Security $security
      * @return Response
+     * @throws InvalidArgumentException
      * @IsGranted("ROLE_CLIENT")
      */
     public function viewUser($userId, UserRepository $userRepository, Security $security)
     {
-        return $userRepository->findOneUser($security->getUser()->getId(), $userId);
+        $key = 'product.once';
+
+        $onCache = $this->adapter->getItem($key);
+
+        if (true === $onCache->isHit()){
+            $data = $onCache->get();
+            return $data;
+        }
+
+        $data = $userRepository->findOneUser($security->getUser()->getId(), $userId);
+        $this->cache->saveItem($key, $data);
+
+        return $data;
     }
 
     /**

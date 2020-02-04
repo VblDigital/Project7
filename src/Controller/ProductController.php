@@ -5,21 +5,19 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Knp\Component\Pager\PaginatorInterface;
-use App\Service\CacheService;
-use Symfony\Component\Validator\Mapping\CascadingStrategy;
 
-class ProductController extends AbstractFOSRestController
+class ProductController extends ObjectManagerController
 {
     /**
      * @Get(
@@ -36,12 +34,21 @@ class ProductController extends AbstractFOSRestController
      * @param PaginatorInterface $pager
      * @param Request $request
      * @param SerializerInterface $serializer
-     * @param CacheService $cacheService
-     * @return CacheService
+     * @return Response
+     * @throws InvalidArgumentException
      */
     public function viewProducts(ProductRepository $productRepository, Security $security, PaginatorInterface $pager,
-                                 Request $request, SerializerInterface $serializer, CacheService $cacheService)
+                                 Request $request, SerializerInterface $serializer)
     {
+        $key = 'product.all';
+
+        $onCache = $this->adapter->getItem($key);
+
+        if (true === $onCache->isHit()){
+            $data = $onCache->get();
+            return $data;
+        }
+
         $query = $productRepository->findAllProductsQuery($security->getUser()->getId());
 
         $paginated = $pager->paginate(
@@ -55,8 +62,10 @@ class ProductController extends AbstractFOSRestController
             'items' => array('list')
         ));
 
-        $response =  new Response($serializer->serialize($paginated, 'json', $context));
-        return $cacheService->cacheResponse($response);
+        $data =  new Response($serializer->serialize($paginated, 'json', $context));
+        $this->cache->saveItem($key, $data);
+
+        return $data;
     }
 
     /**
@@ -74,10 +83,23 @@ class ProductController extends AbstractFOSRestController
      * @param $productId
      * @param ProductRepository $productRepository
      * @param Security $security
-     * @return CacheService
+     * @return Response
+     * @throws InvalidArgumentException
      */
     public function viewProduct($productId, ProductRepository $productRepository, Security $security)
     {
-        return $productRepository->findOneProduct($security->getUser()->getId(), $productId);
+        $key = 'product.once';
+
+        $onCache = $this->adapter->getItem($key);
+
+        if (true === $onCache->isHit()){
+            $data = $onCache->get();
+            return $data;
+        }
+
+        $data = $productRepository->findOneProduct($security->getUser()->getId(), $productId);
+        $this->cache->saveItem($key, $data);
+
+        return $data;
     }
 }

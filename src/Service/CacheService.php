@@ -2,15 +2,24 @@
 
 namespace App\Service;
 
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+
 class CacheService
 {
-    public function cacheResponse($response)
-    {
-        $cache = $response->setSharedMaxAge(3600);
-        $cache->headers->addCacheControlDirective('must-revalidate', true);
+    const EXPIRE_CACHE = 3600;
 
-        return $cache;
+    private $adapter;
+
+    public function __construct(AdapterInterface $adapter)
+    {
+        $this->adapter = $adapter;
     }
 
-
+    public function saveItem($key, $data)
+    {
+        $item = $this->adapter->getItem($key);
+        $item->expiresAfter(self::EXPIRE_CACHE);
+        $item->set($data);
+        $this->adapter->save($item);
+    }
 }
