@@ -34,7 +34,7 @@ Elle sera disponible ici : votre_domaine/doc
 *   créer la base de données :<br>
 ```php bin/console do:da:cr```
 
-et les tables<br>
+    et les tables<br>
 ```php bin/console do:sc:up --force```
 
 *   utiliser les fixtures pour insérer des données :<br>
@@ -52,4 +52,4 @@ Cette API a été développée avec :
 Pour le versionning, les fichiers ont été placés dans un repository sur GitHub.
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3d25db7847a741f09ad24670adf796ad)](https://www.codacy.com/manual/vbopenclass/Project7?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=vbopenclass/Project7&amp;utm_campaign=Badge_Grade)
 
-Valérie Bleser - vbopenclas<br>
+Valérie Bleser - vbopenclass<br>
