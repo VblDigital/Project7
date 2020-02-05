@@ -172,7 +172,7 @@ class UserController extends ObjectManagerController
      * @Rest\Put(
      *     path = "/users/{userId}",
      *     name = "modify_user")
-     * @View(serializerGroups={"credentials"})
+     * @View(serializerGroups={"credentials"}, statusCode="201")
      * @SWG\Response(
      *     response=200,
      *     description="To modify an user",
@@ -217,14 +217,14 @@ class UserController extends ObjectManagerController
             $this->adapter->clear();
         }
 
-        return $this->view($registeredUser, Response::HTTP_ACCEPTED);
+        return $this->view($registeredUser);
     }
 
     /**
      * @Rest\Delete(
      *     path = "/users/{userId}",
      *     name = "delete_user")
-     * @View(serializerGroups={"credentials"})
+     * @View(serializerGroups={"credentials"}, statusCode="204")
      * @SWG\Response(
      *     response=200,
      *     description="To delete an user",
