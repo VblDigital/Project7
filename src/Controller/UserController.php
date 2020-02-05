@@ -120,7 +120,7 @@ class UserController extends ObjectManagerController
      *     name = "new_user")
      * @View(serializerGroups={"credentials"})
      * @SWG\Response(
-     *     response=200,
+     *     response=201,
      *     description="To add a new user",
      *     @Model(type=User::class)
      * )
@@ -174,7 +174,7 @@ class UserController extends ObjectManagerController
      *     name = "modify_user")
      * @View(serializerGroups={"credentials"}, statusCode="201")
      * @SWG\Response(
-     *     response=200,
+     *     response=201,
      *     description="To modify an user",
      *     @Model(type=User::class)
      * )
@@ -226,7 +226,7 @@ class UserController extends ObjectManagerController
      *     name = "delete_user")
      * @View(serializerGroups={"credentials"}, statusCode="204")
      * @SWG\Response(
-     *     response=200,
+     *     response=204,
      *     description="To delete an user",
      *     @Model(type=User::class)
      * )
