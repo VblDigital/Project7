@@ -4,8 +4,8 @@
 
 Nous proposons de fournir à toutes les plateformes qui le souhaitent l’accès au catalogue via une API. Notre créneau est la vente exclusivement en B2B.
 
-#####Contrat client First
-######Quels sont vos besoins :
+##### Contrat client First
+###### Quels sont vos besoins :
 *   consulter la liste des produits BileMo ;
 *   consulter les détails d’un produit BileMo ;
 *   consulter la liste des utilisateurs inscrits liés à un client sur le site web ;
@@ -13,16 +13,16 @@ Nous proposons de fournir à toutes les plateformes qui le souhaitent l’accès
 *   ajouter un nouvel utilisateur lié à un client ;
 *   supprimer un utilisateur ajouté par un client.
 
-######Quels sont vos contraintes :
+###### Quels sont vos contraintes :
 *   seuls les utilisateurs référencés peuvent accéder à l'API
 *   nous devons respecter les niveaux 1, 2 et 3 du modèle de Richardson
 *   les données doivent être transmises en JSON.
 *   les réponses devront être mises en cache
 
-######La documentation :
+###### La documentation :
 Elle sera disponible [votre_domaine]/doc
 
-######L'installation :
+###### L'installation :
 *   cloner ou télécharger le projet pour installer son contenu : <br>
 ```cd project7/``` <br>
 ```git clone https://github.com/vbopenclass/Project7.git```<br>
