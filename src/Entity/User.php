@@ -62,24 +62,29 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"detail", "list", "credentials"})
+     * @Assert\NotBlank
+
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"credentials"})
+     * @Assert\NotBlank
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"detail", "credentials"})
+     * @Assert\NotBlank
      */
     private $email;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Client", inversedBy="users", cascade={"persist"})
      * @ORM\JoinColumn(name="client_ìd", referencedColumnName="id", nullable=false)
+     * @Assert\NotBlank
      */
     private $client;
 

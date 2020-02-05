@@ -243,6 +243,7 @@ class UserController extends ObjectManagerController
         $registeredUser = $repository->findUser($userId);
 
         if(empty($registeredUser)){
+
             return $this->view('Cet utilisateur n\'existe pas', Response::HTTP_NOT_FOUND);
         }
 
