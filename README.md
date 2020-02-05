@@ -19,8 +19,9 @@ Nous proposons de fournir à toutes les plateformes qui le souhaitent l’accès
 *   les données doivent être transmises en JSON.
 *   les réponses devront être mises en cache
 
+
 #### La documentation
-Elle sera disponible votre_domaine/doc
+Elle sera disponible ici : votre_domaine/doc
 
 #### L'installation
 *   cloner ou télécharger le projet pour installer son contenu : <br>
