@@ -43,13 +43,14 @@ class UserController extends ObjectManagerController
      * @param Security $security
      * @param PaginatorInterface $pager
      * @param Request $request
+     * @param SerializerInterface $serializer
      * @return Response
      * @throws InvalidArgumentException
      */
     public function viewUsers(UserRepository $userRepository, Security $security, PaginatorInterface $pager,
                               Request $request, SerializerInterface $serializer)
     {
-        $key = 'user.all';
+        $key = 'user.all?page=' . $request->query->getInt('page', 1);
 
         $onCache = $this->adapter->getItem($key);
 
@@ -98,7 +99,7 @@ class UserController extends ObjectManagerController
      */
     public function viewUser($userId, UserRepository $userRepository, Security $security)
     {
-        $key = 'product.once';
+        $key = 'user.once';
 
         $onCache = $this->adapter->getItem($key);
 
@@ -131,10 +132,12 @@ class UserController extends ObjectManagerController
      * @param ValidatorInterface $validator
      * @param ClientRepository $repository
      * @param Security $security
-     * @return User
+     * @param Request $request
+     * @return \FOS\RestBundle\View\View
+     * @throws InvalidArgumentException
      */
     public function newUser(User $user, EntityManagerInterface $manager, ValidatorInterface $validator,
-                            ClientRepository $repository, Security $security)
+                            ClientRepository $repository, Security $security, Request $request)
     {
         $client = $repository->findClient($security->getUser()->getId());
         $user->setClient($client[0]);
@@ -150,7 +153,19 @@ class UserController extends ObjectManagerController
         $manager->persist($user);
         $manager->flush();
 
-        return $user;
+        $keyAll = 'user.all?page=' . $request->query->getInt('page', 1);
+        $keyOnce = 'user.once';
+
+        $cacheAll = $this->adapter->getItem($keyAll);
+        $cacheOnce = $this->adapter->getItem($keyOnce);
+
+        if (true === $cacheAll->isHit()){
+            $this->adapter->clear();
+        } elseif (true === $cacheOnce->isHit()) {
+            $this->adapter->clear();
+        }
+
+        return $this->view($user, Response::HTTP_CREATED);
     }
 
     /**
@@ -171,8 +186,9 @@ class UserController extends ObjectManagerController
      * @param EntityManagerInterface $manager
      * @IsGranted("ROLE_CLIENT")
      * @return \FOS\RestBundle\View\View
+     * @throws InvalidArgumentException
      */
-    public function modifyUser(User $user, $userId, UserRepository $repository, EntityManagerInterface $manager)
+    public function modifyUser(User $user, $userId, UserRepository $repository, EntityManagerInterface $manager, Request $request)
     {
         $registeredUser = $repository->findUser($userId);
 
@@ -188,6 +204,18 @@ class UserController extends ObjectManagerController
 
         $manager->persist($registeredUser);
         $manager->flush();
+
+        $keyAll = 'user.all?page=' . $request->query->getInt('page', 1);
+        $keyOnce = 'user.once';
+
+        $cacheAll = $this->adapter->getItem($keyAll);
+        $cacheOnce = $this->adapter->getItem($keyOnce);
+
+        if (true === $cacheAll->isHit()){
+            $this->adapter->clear();
+        } elseif (true === $cacheOnce->isHit()) {
+            $this->adapter->clear();
+        }
 
         return $this->view($registeredUser, Response::HTTP_ACCEPTED);
     }
@@ -205,10 +233,12 @@ class UserController extends ObjectManagerController
      * @SWG\Tag(name="Users")
      * @param $userId
      * @param UserRepository $repository
-     * @IsGranted("ROLE_CLIENT")
+     * @param EntityManagerInterface $manager
      * @return \FOS\RestBundle\View\View
+     * @throws InvalidArgumentException
+     * @IsGranted("ROLE_CLIENT")
      */
-    public function deleteUser($userId, UserRepository $repository, EntityManagerInterface $manager)
+    public function deleteUser($userId, UserRepository $repository, EntityManagerInterface $manager, Request $request)
     {
         $registeredUser = $repository->findUser($userId);
 
@@ -219,6 +249,18 @@ class UserController extends ObjectManagerController
         $registeredUser = $registeredUser[0];
         $manager->remove($registeredUser);
         $manager->flush();
+
+        $keyAll = 'user.all?page=' . $request->query->getInt('page', 1);
+        $keyOnce = 'user.once';
+
+        $cacheAll = $this->adapter->getItem($keyAll);
+        $cacheOnce = $this->adapter->getItem($keyOnce);
+
+        if (true === $cacheAll->isHit()){
+            $this->adapter->clear();
+        } elseif (true === $cacheOnce->isHit()) {
+            $this->adapter->clear();
+        }
 
         return $this->view('L\'utilisateur a été supprimé');
     }

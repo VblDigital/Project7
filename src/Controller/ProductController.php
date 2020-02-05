@@ -40,14 +40,7 @@ class ProductController extends ObjectManagerController
     public function viewProducts(ProductRepository $productRepository, Security $security, PaginatorInterface $pager,
                                  Request $request, SerializerInterface $serializer)
     {
-        $key = 'product.all';
-
-        $onCache = $this->adapter->getItem($key);
-
-        if (true === $onCache->isHit()){
-            $data = $onCache->get();
-            return $data;
-        }
+        $key = 'product.all?page=' . $request->query->getInt('page');
 
         $query = $productRepository->findAllProductsQuery($security->getUser()->getId());
 
@@ -61,6 +54,13 @@ class ProductController extends ObjectManagerController
             'Default',
             'items' => array('list')
         ));
+
+        $onCache = $this->adapter->getItem($key);
+
+        if (true === $onCache->isHit()){
+            $data = $onCache->get();
+            return $data;
+        }
 
         $data =  new Response($serializer->serialize($paginated, 'json', $context));
         $this->cache->saveItem($key, $data);
