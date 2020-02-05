@@ -1,6 +1,6 @@
 # *BileMo API*
 
-## BileMo est une entreprise offrant toute une sélection de téléphones mobiles haut de gamme.
+## BileMo est une entreprise offrant toute une sélection de téléphones mobiles haut de gamme
 
 Nous proposons de fournir à toutes les plateformes qui le souhaitent l’accès au catalogue via une API. Notre créneau est la vente exclusivement en B2B
 
@@ -19,7 +19,6 @@ Nous proposons de fournir à toutes les plateformes qui le souhaitent l’accès
 *   les données doivent être transmises en JSON.
 *   les réponses devront être mises en cache
 
-
 #### La documentation
 Elle sera disponible ici : votre_domaine/doc
 
@@ -27,15 +26,20 @@ Elle sera disponible ici : votre_domaine/doc
 *   cloner ou télécharger le projet pour installer son contenu : <br>
 ```cd project7/```<br>
 ```git clone https://github.com/vbopenclass/Project7.git```
+
 *   créer un fichier .env dans le même répertoire que l'index.php et insérer y vos identifiants de base de données
 *   utiliser Composer pour installer les dépendances :<br>
 ```composer install```
+
 *   créer la base de données :<br>
-```php bin/console do:da:cr```<br>
+```php bin/console do:da:cr```
+
 et les tables<br>
 ```php bin/console do:sc:up --force```
+
 *   utiliser les fixtures pour insérer des données :<br>
 ```php bin/console do:fi:lo --append```
+
 *   lancer le serveur :<br>
 ```php bin/console se:ru```
 
@@ -49,4 +53,3 @@ Pour le versionning, les fichiers ont été placés dans un repository sur GitHu
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3d25db7847a741f09ad24670adf796ad)](https://www.codacy.com/manual/vbopenclass/Project7?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=vbopenclass/Project7&amp;utm_campaign=Badge_Grade)
 
 Valérie Bleser - vbopenclas<br>
-[http://www.valeriebleser.fr/]
