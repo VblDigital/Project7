@@ -50,7 +50,7 @@ class UserController extends ObjectManagerController
     public function viewUsers(UserRepository $userRepository, Security $security, PaginatorInterface $pager,
                               Request $request, SerializerInterface $serializer)
     {
-        $key = 'user.all?page=' . $request->query->getInt('page', 1);
+        $key = 'get_user?page=' . $request->query->getInt('page', 1);
 
         $onCache = $this->adapter->getItem($key);
 
@@ -99,7 +99,7 @@ class UserController extends ObjectManagerController
      */
     public function viewUser($userId, UserRepository $userRepository, Security $security)
     {
-        $key = 'user.once?id=' . $userId;
+        $key = 'get_user_' . $userId;
 
         $onCache = $this->adapter->getItem($key);
 
@@ -153,8 +153,8 @@ class UserController extends ObjectManagerController
         $manager->persist($user);
         $manager->flush();
 
-        $keyAll = 'user.all?page=' . $request->query->getInt('page', 1);
-        $keyOnce = 'user.once';
+        $keyAll = 'get_user?page=' . $request->query->getInt('page', 1);
+        $keyOnce = 'get_user_' . $user->getId();
 
         $cacheAll = $this->adapter->getItem($keyAll);
         $cacheOnce = $this->adapter->getItem($keyOnce);
@@ -205,8 +205,8 @@ class UserController extends ObjectManagerController
         $manager->persist($registeredUser);
         $manager->flush();
 
-        $keyAll = 'user.all?page=' . $request->query->getInt('page', 1);
-        $keyOnce = 'user.once';
+        $keyAll = 'get_user?page=' . $request->query->getInt('page', 1);
+        $keyOnce = 'get_user_' . $user->getId();
 
         $cacheAll = $this->adapter->getItem($keyAll);
         $cacheOnce = $this->adapter->getItem($keyOnce);
@@ -251,8 +251,8 @@ class UserController extends ObjectManagerController
         $manager->remove($registeredUser);
         $manager->flush();
 
-        $keyAll = 'user.all?page=' . $request->query->getInt('page', 1);
-        $keyOnce = 'user.once';
+        $keyAll = 'get_user_?page=' . $request->query->getInt('page', 1);
+        $keyOnce = 'get_user_' . $userId;
 
         $cacheAll = $this->adapter->getItem($keyAll);
         $cacheOnce = $this->adapter->getItem($keyOnce);

@@ -40,7 +40,7 @@ class ProductController extends ObjectManagerController
     public function viewProducts(ProductRepository $productRepository, Security $security, PaginatorInterface $pager,
                                  Request $request, SerializerInterface $serializer)
     {
-        $key = 'product.all?page=' . $request->query->getInt('page');
+        $key = 'get_product?page=' . $request->query->getInt('page');
 
         $query = $productRepository->findAllProductsQuery($security->getUser()->getId());
 
@@ -88,7 +88,7 @@ class ProductController extends ObjectManagerController
      */
     public function viewProduct($productId, ProductRepository $productRepository, Security $security)
     {
-        $key = 'product.once?id=' . $productId;
+        $key = 'get_product_' . $productId;
 
         $onCache = $this->adapter->getItem($key);
 
