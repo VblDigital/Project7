@@ -27,7 +27,7 @@ Elle sera disponible ici : votre_domaine/doc
 ```cd project7/```<br>
 ```git clone https://github.com/vbopenclass/Project7.git```
 
-*   créer un fichier .env dans le même répertoire que l'index.php et insérer y vos identifiants de base de données
+*   mettre à jour le .env avec vos identifiants de base de données
 *   utiliser Composer pour installer les dépendances :<br>
 ```composer install```
 

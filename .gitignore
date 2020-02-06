@@ -15,7 +15,6 @@
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 
-.env
 .env.test
 /.idea
 src/Migrations/
