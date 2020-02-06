@@ -99,7 +99,7 @@ class UserController extends ObjectManagerController
      */
     public function viewUser($userId, UserRepository $userRepository, Security $security)
     {
-        $key = 'user.once';
+        $key = 'user.once?id=' . $userId;
 
         $onCache = $this->adapter->getItem($key);
 

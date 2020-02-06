@@ -88,7 +88,7 @@ class ProductController extends ObjectManagerController
      */
     public function viewProduct($productId, ProductRepository $productRepository, Security $security)
     {
-        $key = 'product.once';
+        $key = 'product.once?id=' . $productId;
 
         $onCache = $this->adapter->getItem($key);
 

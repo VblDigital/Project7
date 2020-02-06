@@ -43,6 +43,8 @@ Elle sera disponible ici : votre_domaine/doc
 *   lancer le serveur :<br>
 ```php bin/console se:ru```
 
+*   créér un répertoire jwt/ dans le répertoire config et y insérer vos clés privée et publique
+
 Cette API a été développée avec :
 *   Symfony 4.4
 *   WampServer - Version Version 3.1.9 - 64bit 
