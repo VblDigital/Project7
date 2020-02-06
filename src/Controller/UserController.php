@@ -7,11 +7,11 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
+use Psr\Cache\InvalidArgumentException;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -26,7 +26,7 @@ use Swagger\Annotations as SWG;
  * Class UserController
  * @package App\Controller
  */
-class UserController extends AbstractFOSRestController
+class UserController extends ObjectManagerController
 {
     /**
      * @Rest\Get(
@@ -45,10 +45,20 @@ class UserController extends AbstractFOSRestController
      * @param Request $request
      * @param SerializerInterface $serializer
      * @return Response
+     * @throws InvalidArgumentException
      */
     public function viewUsers(UserRepository $userRepository, Security $security, PaginatorInterface $pager,
                               Request $request, SerializerInterface $serializer)
     {
+        $key = 'user.all?page=' . $request->query->getInt('page', 1);
+
+        $onCache = $this->adapter->getItem($key);
+
+        if (true === $onCache->isHit()){
+            $data = $onCache->get();
+            return $data;
+        }
+
         $query = $userRepository->findAllUsersQuery($security->getUser()->getId());
 
         $paginated = $pager->paginate(
@@ -62,7 +72,10 @@ class UserController extends AbstractFOSRestController
             'items' => array('detail')
         ));
 
-        return new Response($serializer->serialize($paginated, 'json', $context));
+        $data =  new Response($serializer->serialize($paginated, 'json', $context));
+        $this->cache->saveItem($key, $data);
+
+        return $data;
     }
 
     /**
@@ -81,11 +94,24 @@ class UserController extends AbstractFOSRestController
      * @param UserRepository $userRepository
      * @param Security $security
      * @return Response
+     * @throws InvalidArgumentException
      * @IsGranted("ROLE_CLIENT")
      */
     public function viewUser($userId, UserRepository $userRepository, Security $security)
     {
-        return $userRepository->findOneUser($security->getUser()->getId(), $userId);
+        $key = 'user.once';
+
+        $onCache = $this->adapter->getItem($key);
+
+        if (true === $onCache->isHit()){
+            $data = $onCache->get();
+            return $data;
+        }
+
+        $data = $userRepository->findOneUser($security->getUser()->getId(), $userId);
+        $this->cache->saveItem($key, $data);
+
+        return $data;
     }
 
     /**
@@ -94,7 +120,7 @@ class UserController extends AbstractFOSRestController
      *     name = "new_user")
      * @View(serializerGroups={"credentials"})
      * @SWG\Response(
-     *     response=200,
+     *     response=201,
      *     description="To add a new user",
      *     @Model(type=User::class)
      * )
@@ -106,10 +132,12 @@ class UserController extends AbstractFOSRestController
      * @param ValidatorInterface $validator
      * @param ClientRepository $repository
      * @param Security $security
-     * @return User
+     * @param Request $request
+     * @return \FOS\RestBundle\View\View
+     * @throws InvalidArgumentException
      */
     public function newUser(User $user, EntityManagerInterface $manager, ValidatorInterface $validator,
-                            ClientRepository $repository, Security $security)
+                            ClientRepository $repository, Security $security, Request $request)
     {
         $client = $repository->findClient($security->getUser()->getId());
         $user->setClient($client[0]);
@@ -125,16 +153,28 @@ class UserController extends AbstractFOSRestController
         $manager->persist($user);
         $manager->flush();
 
-        return $user;
+        $keyAll = 'user.all?page=' . $request->query->getInt('page', 1);
+        $keyOnce = 'user.once';
+
+        $cacheAll = $this->adapter->getItem($keyAll);
+        $cacheOnce = $this->adapter->getItem($keyOnce);
+
+        if (true === $cacheAll->isHit()){
+            $this->adapter->clear();
+        } elseif (true === $cacheOnce->isHit()) {
+            $this->adapter->clear();
+        }
+
+        return $this->view($user, Response::HTTP_CREATED);
     }
 
     /**
      * @Rest\Put(
      *     path = "/users/{userId}",
      *     name = "modify_user")
-     * @View(serializerGroups={"credentials"})
+     * @View(serializerGroups={"credentials"}, statusCode="201")
      * @SWG\Response(
-     *     response=200,
+     *     response=201,
      *     description="To modify an user",
      *     @Model(type=User::class)
      * )
@@ -146,8 +186,9 @@ class UserController extends AbstractFOSRestController
      * @param EntityManagerInterface $manager
      * @IsGranted("ROLE_CLIENT")
      * @return \FOS\RestBundle\View\View
+     * @throws InvalidArgumentException
      */
-    public function modifyUser(User $user, $userId, UserRepository $repository, EntityManagerInterface $manager)
+    public function modifyUser(User $user, $userId, UserRepository $repository, EntityManagerInterface $manager, Request $request)
     {
         $registeredUser = $repository->findUser($userId);
 
@@ -164,27 +205,40 @@ class UserController extends AbstractFOSRestController
         $manager->persist($registeredUser);
         $manager->flush();
 
-        return $this->view($registeredUser, Response::HTTP_ACCEPTED);
+        $keyAll = 'user.all?page=' . $request->query->getInt('page', 1);
+        $keyOnce = 'user.once';
+
+        $cacheAll = $this->adapter->getItem($keyAll);
+        $cacheOnce = $this->adapter->getItem($keyOnce);
+
+        if (true === $cacheAll->isHit()){
+            $this->adapter->clear();
+        } elseif (true === $cacheOnce->isHit()) {
+            $this->adapter->clear();
+        }
+
+        return $this->view($registeredUser);
     }
 
     /**
      * @Rest\Delete(
      *     path = "/users/{userId}",
      *     name = "delete_user")
-     * @View(serializerGroups={"credentials"})
+     * @View(serializerGroups={"credentials"}, statusCode="204")
      * @SWG\Response(
-     *     response=200,
+     *     response=204,
      *     description="To delete an user",
      *     @Model(type=User::class)
      * )
      * @SWG\Tag(name="Users")
      * @param $userId
      * @param UserRepository $repository
-     * @IsGranted("ROLE_CLIENT")
+     * @param EntityManagerInterface $manager
      * @return \FOS\RestBundle\View\View
-
+     * @throws InvalidArgumentException
+     * @IsGranted("ROLE_CLIENT")
      */
-    public function deleteUser($userId, UserRepository $repository, EntityManagerInterface $manager)
+    public function deleteUser($userId, UserRepository $repository, EntityManagerInterface $manager, Request $request)
     {
         $registeredUser = $repository->findUser($userId);
 
@@ -196,6 +250,18 @@ class UserController extends AbstractFOSRestController
         $registeredUser = $registeredUser[0];
         $manager->remove($registeredUser);
         $manager->flush();
+
+        $keyAll = 'user.all?page=' . $request->query->getInt('page', 1);
+        $keyOnce = 'user.once';
+
+        $cacheAll = $this->adapter->getItem($keyAll);
+        $cacheOnce = $this->adapter->getItem($keyOnce);
+
+        if (true === $cacheAll->isHit()){
+            $this->adapter->clear();
+        } elseif (true === $cacheOnce->isHit()) {
+            $this->adapter->clear();
+        }
 
         return $this->view('L\'utilisateur a été supprimé');
     }
