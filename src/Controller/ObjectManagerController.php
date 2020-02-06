@@ -9,10 +9,19 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class ObjectManagerController extends AbstractFOSRestController
 {
+    /** @var AdapterInterface */
     protected $em;
+    /** @var CacheService */
     protected $cache;
+    /** @var ObjectManager */
     protected $adapter;
 
+    /**
+     * ObjectManagerController constructor.
+     * @param ObjectManager $em
+     * @param AdapterInterface $adapter
+     * @param CacheService $cache
+     */
     public function __construct(ObjectManager $em, AdapterInterface $adapter, CacheService $cache)
     {
         $this->em = $em;
