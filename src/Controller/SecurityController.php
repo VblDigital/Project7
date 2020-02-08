@@ -17,7 +17,7 @@ class SecurityController extends AbstractController
      *     description="Successfully logged",
      * )
      * @SWG\Response(
-     *     response=403,
+     *     response=401,
      *     description="Login credentials incorrect",
      * )
      * @SWG\Tag(name="Login")

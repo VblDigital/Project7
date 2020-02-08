@@ -37,7 +37,7 @@ class ClientRepository extends ServiceEntityRepository
         try {
             return $results = $query->getQuery()->getSingleResult();
         } catch (NoResultException $e) {
-            throw new HttpException(400);
+            throw new HttpException(401);
         }
     }
 }
