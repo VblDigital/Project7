@@ -7,7 +7,7 @@ use \Psr\Cache\InvalidArgumentException;
 
 class CacheService
 {
-    const EXPIRE_CACHE = 3600;
+    const EXPIRE_CACHE = 1;
 
     /** @var AdapterInterface  */
     private $adapter;
