@@ -59,10 +59,6 @@ class ProductRepository extends ServiceEntityRepository
             ->andWhere('product.id = :productId')
             ->setParameters(array('clientId' => $clientId, 'productId' => $productId));
 
-        try {
-            return $results = $query->getQuery()->getSingleResult();
-        } catch (NoResultException $e) {
-            throw new HttpException(204);
-        }
+        return $results = $query->getQuery()->getOneOrNullResult();
     }
 }

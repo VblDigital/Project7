@@ -54,11 +54,7 @@ class UserRepository extends ServiceEntityRepository
             ->andWhere('user.id = :userId')
             ->setParameters(array('clientId' => $clientId, 'userId' => $userId));
 
-        try {
-            return $results = $query->getQuery()->getSingleResult();
-        } catch (NoResultException $e) {
-            throw new HttpException(204);
-        }
+        return $results = $query->getQuery()->getOneOrNullResult();
     }
 
     /**
@@ -72,10 +68,6 @@ class UserRepository extends ServiceEntityRepository
             ->where('user.id = :userId')
             ->setParameters(array('userId' => $userId));
 
-        try {
-            return $results = $query->getQuery()->getSingleResult();
-        } catch (NoResultException $e) {
-            throw new HttpException(400);
-        }
+        return $results = $query->getQuery()->getOneOrNullResult();
     }
 }
