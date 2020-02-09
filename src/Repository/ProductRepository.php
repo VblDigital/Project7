@@ -6,8 +6,11 @@ use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Parameter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * @method Product|null find($id, $lockMode = null, $lockVersion = null)
@@ -33,13 +36,20 @@ class ProductRepository extends ServiceEntityRepository
             ->where('c.id = :clientId')
             ->setParameter('clientId', $clientId);
 
-        return $results = $query->getQuery()->getResult();
+        $results = $query->getQuery()->getResult();
+
+        if (empty($results)){
+            throw new HttpException(204);
+        }
+
+        return $results;
     }
 
     /**
      * @param $clientId
      * @param $productId
      * @return mixed
+     * @throws NonUniqueResultException
      */
     public function findOneProduct($clientId, $productId)
     {
@@ -49,6 +59,6 @@ class ProductRepository extends ServiceEntityRepository
             ->andWhere('product.id = :productId')
             ->setParameters(array('clientId' => $clientId, 'productId' => $productId));
 
-        return $results = $query->getQuery()->getResult();
+        return $results = $query->getQuery()->getOneOrNullResult();
     }
 }

@@ -14,7 +14,11 @@ class SecurityController extends AbstractController
      * @GET(name="login", path="/login_check")
      * @SWG\Response(
      *     response=200,
-     *     description="Login's page for the client",
+     *     description="Successfully logged",
+     * )
+     * @SWG\Response(
+     *     response=401,
+     *     description="Login credentials incorrect",
      * )
      * @SWG\Tag(name="Login")
      * @return JsonResponse

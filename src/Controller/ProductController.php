@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Knp\Component\Pager\PaginatorInterface;
+use Doctrine\ORM\NonUniqueResultException;
 
 class ProductController extends ObjectManagerController
 {
@@ -27,6 +28,14 @@ class ProductController extends ObjectManagerController
      *     response=200,
      *     description="Return the list of a available products",
      *     @Model(type=Product::class)
+     * )
+     * @SWG\Response(
+     *     response=204,
+     *     description="This resources don't exist"
+     * )
+     * @SWG\Response(
+     *     response=401,
+     *     description="Authenticated failed / invalid token"
      * )
      * @SWG\Tag(name="Products")
      * @param ProductRepository $productRepository
@@ -79,12 +88,21 @@ class ProductController extends ObjectManagerController
      *     description="Return the details of a product",
      *     @Model(type=Product::class)
      * )
+     * @SWG\Response(
+     *     response=204,
+     *     description="This resource doesn't exist"
+     * )
+     * @SWG\Response(
+     *     response=401,
+     *     description="Authenticated failed / invalid token"
+     * )
      * @SWG\Tag(name="Products")
      * @param $productId
      * @param ProductRepository $productRepository
      * @param Security $security
      * @return Response
      * @throws InvalidArgumentException
+     * @throws NonUniqueResultException
      */
     public function viewProduct($productId, ProductRepository $productRepository, Security $security)
     {

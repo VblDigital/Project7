@@ -5,6 +5,10 @@ namespace App\Repository;
 use App\Entity\Client;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\NoResultException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Doctrine\ORM\NonUniqueResultException;
+
 
 /**
  * @method Client|null find($id, $lockMode = null, $lockVersion = null)
@@ -22,6 +26,7 @@ class ClientRepository extends ServiceEntityRepository
     /**
      * @param $clientId
      * @return mixed
+     * @throws NonUniqueResultException
      */
     public function findClient($clientId)
     {
@@ -29,6 +34,10 @@ class ClientRepository extends ServiceEntityRepository
             ->where('client.id = :clientId')
             ->setParameters(array('clientId' => $clientId));
 
-        return $results = $query->getQuery()->getResult();
+        try {
+            return $results = $query->getQuery()->getSingleResult();
+        } catch (NoResultException $e) {
+            throw new HttpException(401);
+        }
     }
 }
